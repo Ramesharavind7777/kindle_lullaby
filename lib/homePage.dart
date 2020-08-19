@@ -4,6 +4,9 @@ import 'package:kindlelullaby/database/databaseHelper.dart';
 import 'package:kindlelullaby/models/remaindersModel.dart';
 import 'package:kindlelullaby/remainderDetails.dart';
 
+import 'NotificationPlugin.dart';
+import 'NotificationScreen.dart';
+
 class MyHomePage extends StatefulWidget {
 
   @override
@@ -17,9 +20,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getInitialRemainders();
+    notificationPlugin
+        .setListenerForLowerVersions(onNotificationInLowerVersions);
+    notificationPlugin.setOnNotificationClick(onNotificationClick);
+  }
+
+  onNotificationInLowerVersions(ReceivedNotification receivedNotification) {
+    print('Notification Received ${receivedNotification.id}');
+  }
+
+  onNotificationClick(String payload) {
+    print('Payload $payload');
+    Navigator.push(context, MaterialPageRoute(builder: (coontext) {
+      return NotificationScreen(
+        payload: payload,
+      );
+    }));
   }
 
   void getInitialRemainders() async {
@@ -50,35 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
     2: 'amazonKindle.jpeg', 3: 'amazonPrime.jpeg'
   };
 
-//  List<Remainder> remainders = [
-//    Remainder(dateTime: DateTime.now().toString(), selectedApp: 0, notes: '',
-//               duration: 0),
-//    Remainder(dateTime: DateTime.now().toString(), selectedApp: 1, notes: '',
-//         duration: 1),
-//    Remainder(dateTime: DateTime.now().toString(), selectedApp: 3, notes: '',
-//        duration: 5),
-//    Remainder(dateTime: DateTime.now().toString(), selectedApp: 2, notes: '',
-//         duration: 2),
-//    Remainder(dateTime: DateTime.now().toString(), selectedApp: 1, notes: '',
-//        duration: 1),
-//    Remainder(dateTime: DateTime.now().toString(), selectedApp: 0, notes: '',
-//        duration: 0),
-//    Remainder(dateTime: DateTime.now().toString(), selectedApp: 1, notes: '',
-//        duration: 1),
-//    Remainder(dateTime: DateTime.now().toString(), selectedApp: 1, notes: '',
-//        duration: 3),
-//    Remainder(dateTime: DateTime.now().toString(), selectedApp: 0, notes: '',
-//         duration: 2),
-//    Remainder(dateTime: DateTime.now().toString(), selectedApp: 1, notes: '',
-//        duration: 1),
-//  ];
   List<Remainder> remainders = [];
-
-  void _addNewRemainder() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   Widget appSection(Remainder item) {
     return Column(
@@ -183,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async{
           Navigator.push(context, MaterialPageRoute(
           builder: (context) => AddRemainder())
           );

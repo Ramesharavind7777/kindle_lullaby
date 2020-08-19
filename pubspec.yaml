@@ -31,6 +31,9 @@ dependencies:
   sqflite:
   path:
   path_provider:
+  flutter_local_notifications: ^1.4.4+1
+  rxdart: ^0.24.1
+  http: ^0.12.1
 
 dev_dependencies:
   flutter_test:
